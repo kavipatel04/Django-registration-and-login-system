@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
-from .models import Profile
+from .models import Profile, User, Event, PointReport
 
 
 class RegisterForm(UserCreationForm):
@@ -86,3 +86,31 @@ class UpdateProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['avatar', 'bio']
+
+
+class SubmitPointsForm(forms.ModelForm):
+    EVENT_OPTIONS = []
+    for event in Event.objects.all():
+        EVENT_OPTIONS.append((event, event.title))
+    
+    points_requested = forms.IntegerField()
+    event = forms.CharField(label='Event Name: ', widget=forms.Select(choices=EVENT_OPTIONS))
+    print("Just ran submit points form class")
+    class Meta:
+        model = PointReport
+        fields = ['points_requested', 'event']
+
+    def create(self, data, my_user):
+        print(data)
+        print(my_user)
+        my_event = None
+        for event in Event.objects.all():
+            if event.title == data['event']:
+                my_event = event
+                print(my_event)
+                break
+        
+        PointReport.objects.create(user=my_user, event=my_event, points_requested=data['points_requested'])
+    
+
+

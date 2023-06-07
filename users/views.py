@@ -6,7 +6,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.views import View
 from django.contrib.auth.decorators import login_required
 
-from .forms import RegisterForm, LoginForm, UpdateUserForm, UpdateProfileForm
+from .forms import RegisterForm, LoginForm, UpdateUserForm, UpdateProfileForm, SubmitPointsForm
 
 
 def home(request):
@@ -95,3 +95,19 @@ def profile(request):
         profile_form = UpdateProfileForm(instance=request.user.profile)
 
     return render(request, 'users/profile.html', {'user_form': user_form, 'profile_form': profile_form})
+
+
+@login_required
+def submit_points(request):
+    if request.method == 'POST':
+        points_form = SubmitPointsForm(request.POST, instance=request.user)
+
+        if points_form.is_valid():
+            points_form.create(points_form.cleaned_data, request.user)
+            messages.success(request, 'Your points submission has been successfully sent')
+            return redirect(to='users-points')
+    else:
+        points_form = SubmitPointsForm(instance=request.user)
+
+    return render(request, 'users/points.html', {'points_form': points_form})
+    
