@@ -6,7 +6,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.views import View
 from django.contrib.auth.decorators import login_required
 
-from .forms import RegisterForm, LoginForm, UpdateUserForm, UpdateProfileForm, SubmitPointsForm
+from .forms import RegisterForm, LoginForm, UpdateUserForm, UpdateProfileForm, SubmitPointsForm, SponsorVerificationForm
 
 
 def home(request):
@@ -111,3 +111,18 @@ def submit_points(request):
 
     return render(request, 'users/points.html', {'points_form': points_form})
     
+@login_required
+def verify_points(request):
+    if request.method == 'POST':
+        sponsor_form = SponsorVerificationForm(request.POST, instance=request.user)
+        sponsor_form.load_form()
+
+        if sponsor_form.is_valid():
+            sponsor_form.update_verification(sponsor_form.cleaned_data)
+            messages.success(request, 'Your points submission has been successfully sent')
+            return redirect(to='users-verifications')
+    else:
+        sponsor_form = SponsorVerificationForm(instance=request.user)
+        sponsor_form.load_form()
+
+    return render(request, 'users/verifications.html', {'sponsor_form': sponsor_form})

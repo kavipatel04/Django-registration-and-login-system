@@ -41,11 +41,13 @@ class Profile(models.Model):
             img.save(self.avatar.path)
 
 class PointReport(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="submitter")
     event = models.ForeignKey(Event, on_delete=models.CASCADE, unique=False)
     report_date = models.DateTimeField('Report Date', default=timezone.now(), editable=False)
     points_requested = models.DecimalField(decimal_places=1, max_digits=10)
     points_granted = models.DecimalField(decimal_places=1,max_digits=10, default = 0.0)
+    notes = models.TextField(default=None, null=True)
+    verified_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="verifier", null=True)
 
     def __str__(self):
         return "Point Submission for " + self.user.username + " Event: " + self.event.title

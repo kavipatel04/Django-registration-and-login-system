@@ -93,8 +93,10 @@ class SubmitPointsForm(forms.ModelForm):
     for event in Event.objects.all():
         EVENT_OPTIONS.append((event, event.title))
     
-    points_requested = forms.IntegerField()
+    points_requested = forms.DecimalField(decimal_places=1, max_digits=2)
     event = forms.CharField(label='Event Name: ', widget=forms.Select(choices=EVENT_OPTIONS))
+    notes = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 5}), required=False)
+
     print("Just ran submit points form class")
     class Meta:
         model = PointReport
@@ -110,7 +112,36 @@ class SubmitPointsForm(forms.ModelForm):
                 print(my_event)
                 break
         
-        PointReport.objects.create(user=my_user, event=my_event, points_requested=data['points_requested'])
+        PointReport.objects.create(user=my_user, event=my_event, points_requested=data['points_requested'], notes=data['notes'])
+
+
+class SponsorVerificationForm(forms.ModelForm):
+    myReports = PointReport.objects.filter(points_granted=0.0)
+    points_approved = forms.DecimalField(decimal_places=1, max_digits=3)
+    
+
+    class Meta:
+        model = PointReport
+        fields = ['points_granted', 'verified_by']
+    
+    def load_user(self, my_user):
+        self.user = my_user
+        print(self.instance)
+
+    def load_form(self):
+        print("User is " + self.instance.first_name + " " + self.instance.last_name)
+        for report in self.myReports:
+            if self.instance.username == report.event.sponsor.username:
+                self.event_name = report.event.title
+                self.event_date = report.event.event_date
+                self.points_requested = report.points_requested
+                self.submitter_fname = report.user.first_name
+                self.submitter_lname = report.user.last_name
+    
+
+    def update_verification(self, data):
+        print(data)
+    
     
 
 
