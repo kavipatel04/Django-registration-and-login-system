@@ -23,16 +23,30 @@
                 <div class="col-md-5">
                     <div class="form-group">
                         <hr>
+                        <h5>Event Details: </h5>
+
+                        <label class="small mb-1">Event Title: </label>
+                        {{ sponsor_form.event_name}} <br>
+                        <label class="small mb-1">Event Date: </label>
+                        {{ sponsor_form.event_date}}<br>
+                        <label class="small mb-1">Submitter: </label>
+                        {{ sponsor_form.full_name}}<br>
+                        <label class="small mb-1">Submitted On: </label>
+                        {{ sponsor_form.report_submitted}}<br>
                         
+                        <hr>
                         <label class="small mb-1">Points Requested:</label>
                         {{ sponsor_form.points_requested}}
                         <hr>
                         <label class="small mb-1">Notes:</label>
                         {{ sponsor_form.notes}}
-                        <label class="small mb-1">Notes:</label>
-                        {{ sponsor_form.points_approved}}
+                        <hr><label class="small mb-1">Points Approved:</label>
+                        {{ sponsor_form.points_granted}}
 
                         {{sponsor_form.eventName}}
+
+                        {{ sponsor_form.errors }}
+                        {{ sponsor_form.non_field_errors }} 
                     </div>
                 </div>
             </div>

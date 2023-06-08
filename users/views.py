@@ -103,8 +103,20 @@ def submit_points(request):
         points_form = SubmitPointsForm(request.POST, instance=request.user)
 
         if points_form.is_valid():
-            points_form.create(points_form.cleaned_data, request.user)
-            messages.success(request, 'Your points submission has been successfully sent')
+            if (points_form.get_e_code_match(points_form.cleaned_data)):
+                if (points_form.verify_points(points_form.cleaned_data)):
+                    my_message = 'Your points submission has been successfully submitted.'
+                    points_form.create(points_form.cleaned_data, request.user, points_form.cleaned_data['points_requested'])
+                else:
+                    my_message = 'Your points form has been submitted!'
+                    points_form.create(points_form.cleaned_data, request.user, 0)
+            else:
+                my_message = 'Your points form has been submitted!'
+                points_form.create(points_form.cleaned_data, request.user, 0)
+
+            messages.success(request, my_message)
+            
+            
             return redirect(to='users-points')
     else:
         points_form = SubmitPointsForm(instance=request.user)
@@ -116,9 +128,10 @@ def verify_points(request):
     if request.method == 'POST':
         sponsor_form = SponsorVerificationForm(request.POST, instance=request.user)
         sponsor_form.load_form()
-
+        
         if sponsor_form.is_valid():
             sponsor_form.update_verification(sponsor_form.cleaned_data)
+            sponsor_form.submit(sponsor_form.cleaned_data)
             messages.success(request, 'Your points submission has been successfully sent')
             return redirect(to='users-verifications')
     else:

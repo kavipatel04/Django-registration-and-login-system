@@ -12,6 +12,8 @@ class Event(models.Model):
     pub_date = models.DateTimeField('Publish Date ', default=timezone.now())
     event_date = models.DateTimeField('Event Date')
     points = models.FloatField(default=0.0)
+    event_s_code = models.IntegerField(unique=True, null=True)
+    description = models.TextField(default=None, null=True)
 
     def __str__(self):
         return self.title
@@ -43,7 +45,7 @@ class Profile(models.Model):
 class PointReport(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="submitter")
     event = models.ForeignKey(Event, on_delete=models.CASCADE, unique=False)
-    report_date = models.DateTimeField('Report Date', default=timezone.now(), editable=False)
+    report_date = models.DateTimeField('Report Date', default=timezone.now())
     points_requested = models.DecimalField(decimal_places=1, max_digits=10)
     points_granted = models.DecimalField(decimal_places=1,max_digits=10, default = 0.0)
     notes = models.TextField(default=None, null=True)
@@ -52,10 +54,6 @@ class PointReport(models.Model):
     def __str__(self):
         return "Point Submission for " + self.user.username + " Event: " + self.event.title
 
-    def save(self, *args, **kwargs):
-        super().save()
-
-        print("Running save ")
     
    
     
