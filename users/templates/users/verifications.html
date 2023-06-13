@@ -22,6 +22,7 @@
             <div class="form-row">
                 <div class="col-md-5">
                     <div class="form-group">
+                        {% if sponsor_form.to_review %}
                         <hr>
                         <h5>Event Details: </h5>
 
@@ -47,6 +48,9 @@
 
                         {{ sponsor_form.errors }}
                         {{ sponsor_form.non_field_errors }} 
+                        {% else %}
+                        <h5>No forms to review!</h5>
+                        {% endif %}
                     </div>
                 </div>
             </div>

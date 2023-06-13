@@ -7,7 +7,7 @@ from PIL import Image
 
 
 class Event(models.Model):
-    sponsor = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
+    sponsor = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     title = models.CharField(default='Title TBA', max_length=200)
     pub_date = models.DateTimeField('Publish Date ', default=timezone.now())
     event_date = models.DateTimeField('Event Date')

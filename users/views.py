@@ -101,7 +101,8 @@ def profile(request):
 def submit_points(request):
     if request.method == 'POST':
         points_form = SubmitPointsForm(request.POST, instance=request.user)
-
+        points_form.load_events()
+        print("Ran 1")
         if points_form.is_valid():
             if (points_form.get_e_code_match(points_form.cleaned_data)):
                 if (points_form.verify_points(points_form.cleaned_data)):
@@ -120,6 +121,8 @@ def submit_points(request):
             return redirect(to='users-points')
     else:
         points_form = SubmitPointsForm(instance=request.user)
+        points_form.load_events()
+        print("Ran 2")
 
     return render(request, 'users/points.html', {'points_form': points_form})
     

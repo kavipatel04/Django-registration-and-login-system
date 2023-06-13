@@ -90,19 +90,38 @@ class UpdateProfileForm(forms.ModelForm):
 
 class SubmitPointsForm(forms.ModelForm):
     my_event = None
-    EVENT_OPTIONS = []
-    for event in Event.objects.all():
-        EVENT_OPTIONS.append((event, event.title))
     
+    
+    def get_options():
+        EVENT_OPTIONS = []
+        for event in Event.objects.all():
+            EVENT_OPTIONS.append((event, event.title))
+        print(EVENT_OPTIONS)
+        return EVENT_OPTIONS
+
     points_requested = forms.DecimalField(decimal_places=1, max_digits=2)
-    event = forms.CharField(label='Event Name: ', widget=forms.Select(choices=EVENT_OPTIONS))
+    event = forms.CharField(label='Event Name: ', widget=forms.Select(choices=get_options()))
     notes = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 5}), required=False)
     e_code = forms.IntegerField()
 
+    print("Running")
     print("Just ran submit points form class")
     class Meta:
         model = PointReport
         fields = ['points_requested', 'event']
+
+    def load_events(self):
+        EVENT_OPTIONS = []
+        for event in Event.objects.all():
+            EVENT_OPTIONS.append((event, event.title))
+        print(EVENT_OPTIONS)
+        
+
+        self.event = forms.CharField(label='Event Name: ', widget=forms.Select(choices=EVENT_OPTIONS))
+        
+        print("Loaded events")
+
+        return forms.CharField(label='Event Name: ', widget=forms.Select(choices=EVENT_OPTIONS))
 
     def create(self, data, my_user, p_a):
         print(data)
@@ -149,6 +168,7 @@ class SponsorVerificationForm(forms.ModelForm):
 
     def load_form(self):
         self.myReports = PointReport.objects.filter(points_granted=0.0)
+        self.storedReport = None
         for report in self.myReports:
             if self.instance.username == report.event.sponsor.username:
                 self.event_name = report.event.title
@@ -165,6 +185,10 @@ class SponsorVerificationForm(forms.ModelForm):
                 self.points_granted = forms.DecimalField(decimal_places=1, max_digits=3, initial=self.points_requested)
                 self.storedReport = report
                 break
+        if self.storedReport == None:
+            self.to_review = False
+        else: 
+            self.to_review = True
 
     def submit(self, data):
         self.storedReport.points_granted = data['points_granted']
