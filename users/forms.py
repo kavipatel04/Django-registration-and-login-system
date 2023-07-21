@@ -176,6 +176,7 @@ class SponsorVerificationForm(forms.ModelForm):
                 self.points_requested = report.points_requested
                 self.submitter_fname = report.user.first_name
                 self.submitter_lname = report.user.last_name
+                self.submitter_avatar = report.user.profile.avatar.url
                 self.report_submited = report.report_date
                 self.full_name = self.submitter_fname + " " + self.submitter_lname
                 if report.notes == "":
@@ -200,6 +201,7 @@ class SponsorVerificationForm(forms.ModelForm):
         print(data)
         print("Updating")
     
-    
-
-
+class UserData(forms.ModelForm):
+    class Meta:
+        model = PointReport
+        fields = ['points_granted', 'points_requested']

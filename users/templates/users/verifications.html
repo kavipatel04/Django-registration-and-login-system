@@ -2,7 +2,7 @@
 {% block title %}Points Verification Page{% endblock title %}
 {% block content %}
     <div class="row my-3 p-3">
-        <img class="rounded-circle account-img" src="{{ user.profile.avatar.url }} " style="cursor: pointer;"/>
+        <img class="rounded-circle account-img" src="{{ sponsor_form.submitter_avatar }} " style="cursor: pointer;"/>
     </div>
     {% if points_form.errors %}
         <div class="alert alert-danger alert-dismissible" role="alert">
